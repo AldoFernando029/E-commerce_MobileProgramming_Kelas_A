@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:marketplace_app/navigasi/navigasibawah.dart'; // ganti ke navigasi bawah
+import 'package:google_fonts/google_fonts.dart';
+import 'package:marketplace_app/navigasi/navigasibawah.dart'; // pastikan path sesuai
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -53,8 +54,8 @@ class _SplashPageState extends State<SplashPage>
         child: Center(
           child: Text(
             "BelanjaKuy",
-            style: const TextStyle(
-              fontSize: 32,
+            style: GoogleFonts.poppins(
+              fontSize: 36,
               fontWeight: FontWeight.bold,
               color: Colors.blueAccent,
             ),

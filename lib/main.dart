@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
-import 'pages/splash.dart'; 
+import 'package:provider/provider.dart';
+import 'order/order_provider.dart';
+import 'pages/splash.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => OrderProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -12,11 +21,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'BelanjaKuy',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const SplashPage(), // splash dulu
+      title: "BelanjaKuy",
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const SplashPage(),
     );
   }
 }

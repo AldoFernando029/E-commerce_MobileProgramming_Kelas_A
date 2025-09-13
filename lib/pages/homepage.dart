@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../utils/utils.dart';
+import '../order/order_provider.dart';
+import '../order/order_model.dart';
 import 'search.dart';
+import 'package:marketplace_app/cart/cart.dart';
+import 'package:intl/intl.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -29,7 +34,7 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Search bar + cart
+                // 🔍 Search bar + cart
                 Row(
                   children: [
                     Expanded(
@@ -67,13 +72,21 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.grey[200],
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const CartPage()),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey[200],
+                        ),
+                        child: const Icon(Icons.shopping_cart_outlined),
                       ),
-                      child: const Icon(Icons.shopping_cart_outlined),
                     ),
                   ],
                 ),
@@ -242,6 +255,31 @@ class ProductCard extends StatelessWidget {
                     color: Colors.red,
                     fontWeight: FontWeight.bold,
                   ),
+                ),
+                const SizedBox(height: 8),
+                ElevatedButton(
+                  onPressed: () {
+                    final now =
+                        DateFormat("dd MMM yyyy").format(DateTime.now());
+
+                    Provider.of<OrderProvider>(context, listen: false).addOrder(
+                      Order(
+                        title: product.title,
+                        date: now,
+                        price: product.price,
+                        image: product.image, // ✅ tambahkan image ke Order
+                      ),
+                    );
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Pesanan ditambahkan!")),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    minimumSize: const Size(double.infinity, 36),
+                  ),
+                  child: const Text("Berbelanja"),
                 ),
               ],
             ),
