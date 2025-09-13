@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'splash.dart';
-import 'homepage.dart';
-import 'search.dart';
-import 'profile.dart';
-import 'order.dart';
+import 'pages/splash.dart'; 
 
 void main() {
   runApp(const MyApp());
@@ -16,9 +12,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Marketplace App',
-      theme: ThemeData(primarySwatch: Colors.red),
-      home: const SplashPage(),
+      title: 'BelanjaKuy',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const SplashPage(), // splash dulu
     );
   }
 }
