@@ -24,7 +24,7 @@ class ProductDetailPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ✅ Gambar produk
+      
             Container(
               height: 300,
               width: double.infinity,
@@ -33,7 +33,7 @@ class ProductDetailPage extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // ✅ Judul
+        
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
@@ -46,7 +46,7 @@ class ProductDetailPage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
 
-            // ✅ Harga
+           
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
@@ -60,7 +60,7 @@ class ProductDetailPage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
 
-            // ✅ Rating
+           
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
@@ -76,7 +76,7 @@ class ProductDetailPage extends StatelessWidget {
             ),
             const Divider(height: 30),
 
-            // ✅ Deskripsi
+           
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
@@ -90,7 +90,7 @@ class ProductDetailPage extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
-            // ✅ Kategori
+            
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
@@ -106,7 +106,7 @@ class ProductDetailPage extends StatelessWidget {
         ),
       ),
 
-      // ✅ Tombol beli (masuk ke keranjang)
+      
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(12),
         child: ElevatedButton(

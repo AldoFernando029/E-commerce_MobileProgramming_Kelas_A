@@ -1,26 +1,82 @@
+import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../order/order_model.dart';
 
-class MenuPage extends StatelessWidget {
+class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
 
   @override
+  State<MenuPage> createState() => _MenuPageState();
+}
+
+class _MenuPageState extends State<MenuPage> {
+  final List<String> statusList = [
+    "Pembayaran",
+    "Proses",
+    "Dikirim",
+    "Sampai",
+    "Review"
+  ];
+
+  String? filterStatus;
+  Timer? _timer;
+  List<Order> orders = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadOrders();
+  }
+
+  Future<void> _loadOrders() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedOrders = prefs.getStringList('orders') ?? [];
+
+    setState(() {
+      orders = savedOrders.map((o) => Order.fromJson(jsonDecode(o))).toList();
+    });
+
+    if (orders.isNotEmpty) {
+      _startStatusTimer();
+    }
+  }
+
+  void _startStatusTimer() {
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 10), (timer) async {
+      if (!mounted) return;
+
+      setState(() {
+        for (var order in orders) {
+          
+          if (order.statusIndex < statusList.length - 1) {
+            order.statusIndex++;
+          }
+        }
+      });
+
+      
+      final prefs = await SharedPreferences.getInstance();
+      final encoded = orders.map((o) => jsonEncode(o.toJson())).toList();
+      await prefs.setStringList('orders', encoded);
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> transaksi = [
-      {
-        "title": "Belanja",
-        "date": "12 Jun 2025",
-        "product": "Fjällräven Kånken No. 2",
-        "price": 153.53,
-        "status": "Berhasil"
-      },
-      {
-        "title": "Belanja",
-        "date": "12 Jun 2025",
-        "product": "Fjällräven Kånken No. 2",
-        "price": 153.53,
-        "status": "Berhasil"
-      },
-    ];
+    final filteredOrders = orders.where((order) {
+      final status = statusList[order.statusIndex];
+      if (filterStatus == null) return true;
+      return filterStatus == status;
+    }).toList();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -45,43 +101,87 @@ class MenuPage extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // Status Pesanan
+            // ✅ Filter Status
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                _StatusIcon(icon: Icons.payment, label: "Pembayaran"),
-                _StatusIcon(icon: Icons.inventory, label: "Proses"),
-                _StatusIcon(icon: Icons.local_shipping, label: "Dikirim"),
-                _StatusIcon(icon: Icons.inventory_2, label: "Sampai"),
-                _StatusIcon(icon: Icons.reviews, label: "Review"),
-              ],
+              children: List.generate(statusList.length, (index) {
+                final isSelected = filterStatus == statusList[index];
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (isSelected) {
+                        filterStatus = null;
+                      } else {
+                        filterStatus = statusList[index];
+                      }
+                    });
+                  },
+                  child: _StatusIcon(
+                    icon: _getIcon(statusList[index]),
+                    label: statusList[index],
+                    active: isSelected,
+                  ),
+                );
+              }),
             ),
             const SizedBox(height: 20),
 
-            // Daftar Transaksi
-            Column(
-              children: transaksi
-                  .map((trx) => _TransaksiCard(
-                        title: trx["title"],
-                        date: trx["date"],
-                        product: trx["product"],
-                        price: trx["price"],
-                        status: trx["status"],
-                      ))
-                  .toList(),
-            )
+            if (filteredOrders.isEmpty)
+              const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Text(
+                    "Belum ada pesanan",
+                    style: TextStyle(color: Colors.grey, fontSize: 14),
+                  ),
+                ),
+              )
+            else
+              Column(
+                children: filteredOrders
+                    .map((order) => _TransaksiCard(
+                          title: "Belanja",
+                          date: order.date,
+                          product: order.title,
+                          price: order.price * order.quantity,
+                          status: statusList[order.statusIndex],
+                        ))
+                    .toList(),
+              ),
           ],
         ),
       ),
     );
+  }
+
+  IconData _getIcon(String status) {
+    switch (status) {
+      case "Pembayaran":
+        return Icons.payment;
+      case "Proses":
+        return Icons.inventory;
+      case "Dikirim":
+        return Icons.local_shipping;
+      case "Sampai":
+        return Icons.inventory_2;
+      case "Review":
+        return Icons.reviews;
+      default:
+        return Icons.help;
+    }
   }
 }
 
 class _StatusIcon extends StatelessWidget {
   final IconData icon;
   final String label;
+  final bool active;
 
-  const _StatusIcon({required this.icon, required this.label});
+  const _StatusIcon({
+    required this.icon,
+    required this.label,
+    this.active = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -89,11 +189,15 @@ class _StatusIcon extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 25,
-          backgroundColor: Colors.grey[200],
-          child: Icon(icon, color: Colors.black),
+          backgroundColor: active ? Colors.blue : Colors.grey[200],
+          child: Icon(icon, color: active ? Colors.white : Colors.black),
         ),
         const SizedBox(height: 6),
-        Text(label, style: const TextStyle(fontSize: 12)),
+        Text(label,
+            style: TextStyle(
+                fontSize: 12,
+                fontWeight: active ? FontWeight.bold : FontWeight.normal,
+                color: active ? Colors.blue : Colors.black)),
       ],
     );
   }
@@ -134,7 +238,6 @@ class _TransaksiCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Title + status
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -149,7 +252,8 @@ class _TransaksiCard extends StatelessWidget {
                           style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 14)),
                       Text(date,
-                          style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+                          style: TextStyle(
+                              color: Colors.grey[600], fontSize: 12)),
                     ],
                   )
                 ],
@@ -174,7 +278,7 @@ class _TransaksiCard extends StatelessWidget {
               style: const TextStyle(fontSize: 14, color: Colors.black)),
           const SizedBox(height: 6),
           Text(
-            "\$${price.toStringAsFixed(2)}",
+            "Rp${price.toStringAsFixed(2)}",
             style: const TextStyle(
                 fontSize: 14, color: Colors.red, fontWeight: FontWeight.bold),
           ),

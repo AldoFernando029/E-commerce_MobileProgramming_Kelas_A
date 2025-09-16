@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../utils/utils.dart'; // supaya bisa pakai Product model
-import 'homepage.dart'; // supaya bisa pakai ProductCard
+import '../utils/utils.dart'; 
+import 'homepage.dart'; 
 
 class SearchPage extends StatefulWidget {
   final String initialQuery;

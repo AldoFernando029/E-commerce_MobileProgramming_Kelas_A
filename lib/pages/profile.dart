@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../pages/menupage.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -32,25 +33,47 @@ class _ProfilePageState extends State<ProfilePage> {
     await prefs.setString('alamat', newAlamat);
   }
 
-  void _editAlamat() {
+  void _showBiodataPopup() {
     _alamatController.text = alamat;
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Ubah Alamat"),
-        content: TextField(
-          controller: _alamatController,
-          maxLines: 5,
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            hintText: "Masukkan alamat baru...",
+        title: const Text("Biodata"),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const CircleAvatar(
+                radius: 40,
+                backgroundImage: AssetImage("assets/profile.jpg"),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                "Nama: Muhammad Aldi Rifky Pasaribu",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 6),
+              const Text("Member: Gold"),
+              const SizedBox(height: 12),
+              const Text(
+                "Alamat:",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              TextField(
+                controller: _alamatController,
+                maxLines: 4,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("Batal"),
+            child: const Text("Tutup"),
           ),
           ElevatedButton(
             onPressed: () {
@@ -86,9 +109,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 child: Row(
                   children: [
-                    const CircleAvatar(
-                      radius: 30,
-                      backgroundImage: AssetImage("assets/profile.jpg"), // ganti sesuai asset
+                    GestureDetector(
+                      onTap: _showBiodataPopup, 
+                      child: const CircleAvatar(
+                        radius: 30,
+                        backgroundImage: AssetImage("assets/profile.jpg"),
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Column(
@@ -127,56 +153,39 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(height: 20),
 
               const Text(
-                "Alamat",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-              const SizedBox(height: 8),
-
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.grey.shade400),
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.shade200,
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    )
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(alamat),
-                    const SizedBox(height: 10),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: OutlinedButton(
-                        onPressed: _editAlamat,
-                        child: const Text("Ubah"),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              const Text(
                 "Transaksi",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               const SizedBox(height: 12),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: const [
-                  _MenuIcon(icon: Icons.payment, label: "Pembayaran"),
-                  _MenuIcon(icon: Icons.inventory, label: "Proses"),
-                  _MenuIcon(icon: Icons.local_shipping, label: "Dikirim"),
-                  _MenuIcon(icon: Icons.inventory_2, label: "Sampai"),
-                  _MenuIcon(icon: Icons.reviews, label: "Review"),
+                children: [
+                  _MenuIcon(
+                    icon: Icons.payment,
+                    label: "Pembayaran",
+                    onTap: () => _openMenuPage(context, "Pembayaran"),
+                  ),
+                  _MenuIcon(
+                    icon: Icons.inventory,
+                    label: "Proses",
+                    onTap: () => _openMenuPage(context, "Proses"),
+                  ),
+                  _MenuIcon(
+                    icon: Icons.local_shipping,
+                    label: "Dikirim",
+                    onTap: () => _openMenuPage(context, "Dikirim"),
+                  ),
+                  _MenuIcon(
+                    icon: Icons.inventory_2,
+                    label: "Sampai",
+                    onTap: () => _openMenuPage(context, "Sampai"),
+                  ),
+                  _MenuIcon(
+                    icon: Icons.reviews,
+                    label: "Review",
+                    onTap: () => _openMenuPage(context, "Review"),
+                  ),
                 ],
               ),
             ],
@@ -185,25 +194,43 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
+
+  void _openMenuPage(BuildContext context, String status) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const MenuPage(),
+        settings: RouteSettings(arguments: status),
+      ),
+    );
+  }
 }
 
 class _MenuIcon extends StatelessWidget {
   final IconData icon;
   final String label;
+  final VoidCallback onTap;
 
-  const _MenuIcon({required this.icon, required this.label});
+  const _MenuIcon({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CircleAvatar(
-          backgroundColor: Colors.grey[200],
-          child: Icon(icon, color: Colors.black),
-        ),
-        const SizedBox(height: 6),
-        Text(label, style: const TextStyle(fontSize: 12)),
-      ],
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          CircleAvatar(
+            backgroundColor: Colors.grey[200],
+            child: Icon(icon, color: Colors.black),
+          ),
+          const SizedBox(height: 6),
+          Text(label, style: const TextStyle(fontSize: 12)),
+        ],
+      ),
     );
   }
 }

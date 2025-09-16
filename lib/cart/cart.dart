@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../order/order_provider.dart';
 import '../order/order_model.dart';
+import '../pages/checkout.dart'; 
 
 class CartPage extends StatelessWidget {
   const CartPage({super.key});
@@ -34,16 +35,15 @@ class CartPage extends StatelessWidget {
                     },
                   ),
                 ),
-                // ✅ Footer Pilih Semua + Beli
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     border: Border(top: BorderSide(color: Colors.grey.shade300)),
                   ),
                   child: Row(
                     children: [
-                      // ✅ Checkbox pilih semua
                       Checkbox(
                         value: orders.isNotEmpty &&
                             orders.every((o) => o.isSelected),
@@ -57,10 +57,13 @@ class CartPage extends StatelessWidget {
                         onPressed: orderProvider.selectedOrders.isEmpty
                             ? null
                             : () {
-                                final count = orderProvider.checkoutSelected();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text("$count produk berhasil dibeli 🚀"),
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => CheckoutPage(
+                                      selectedOrders:
+                                          orderProvider.selectedOrders,
+                                    ),
                                   ),
                                 );
                               },
@@ -69,7 +72,8 @@ class CartPage extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 24, vertical: 10),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25)),
+                            borderRadius: BorderRadius.circular(25),
+                          ),
                         ),
                         child: const Text("Beli"),
                       ),
@@ -91,14 +95,14 @@ class CartPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-              color: Colors.grey.shade200,
-              blurRadius: 6,
-              offset: const Offset(0, 3))
+            color: Colors.grey.shade200,
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          )
         ],
       ),
       child: Row(
         children: [
-          // ✅ Checkbox item
           Checkbox(
             value: order.isSelected,
             onChanged: (_) {
@@ -107,7 +111,6 @@ class CartPage extends StatelessWidget {
           ),
           const SizedBox(width: 8),
 
-          // ✅ Gambar produk
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: Image.network(
@@ -119,22 +122,24 @@ class CartPage extends StatelessWidget {
                 width: 60,
                 height: 60,
                 color: Colors.grey[300],
-                child: const Icon(Icons.image_not_supported, color: Colors.grey),
+                child: const Icon(Icons.image_not_supported,
+                    color: Colors.grey),
               ),
             ),
           ),
           const SizedBox(width: 12),
 
-          // ✅ Info produk
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(order.title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 14)),
+                Text(
+                  order.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 14),
+                ),
                 const SizedBox(height: 4),
                 Text(
                   "\$${order.price.toStringAsFixed(2)}",
@@ -145,7 +150,6 @@ class CartPage extends StatelessWidget {
             ),
           ),
 
-          // ✅ Tombol jumlah +/- 
           Row(
             children: [
               IconButton(

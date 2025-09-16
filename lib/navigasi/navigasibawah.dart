@@ -14,9 +14,9 @@ class _NavigasiBawahState extends State<NavigasiBawah> {
   int _selectedIndex = 1;
 
   final List<Widget> _pages = const [
-    ProfilePage(), // index 0
-    HomePage(),    // index 1
-    MenuPage(),    // index 2
+    ProfilePage(), 
+    HomePage(),    
+    MenuPage(),    
   ];
 
   void _onItemTapped(int index) {

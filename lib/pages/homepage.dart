@@ -6,7 +6,7 @@ import '../order/order_model.dart';
 import 'search.dart';
 import 'package:marketplace_app/cart/cart.dart';
 import 'package:intl/intl.dart';
-import 'product_detail.dart'; // ✅ tambahkan ini
+import 'product_detail.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    products = fetchProducts(); // panggil dari utils.dart
+    products = fetchProducts();
   }
 
   @override
@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 🔍 Search bar + cart
+                
                 Row(
                   children: [
                     Expanded(
@@ -93,23 +93,16 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(height: 15),
 
-                // Wishlist + Status + Balance
+                // Hanya saldo AldiPay
                 Row(
                   children: [
-                    _chip(
-                        icon: Icons.favorite,
-                        label: "Wishlist",
-                        color: Colors.red),
-                    const SizedBox(width: 8),
-                    _chip(label: "Status"),
-                    const SizedBox(width: 8),
-                    _chip(label: "AldiPay\nSaldo : 900\$"),
+                    _chip(label: "AldiPay\nSaldo : Rp. 900"),
                   ],
                 ),
 
                 const SizedBox(height: 20),
 
-                // Banner Promo
+                // Banner Promo pakai gambar lokal
                 Container(
                   padding: const EdgeInsets.all(15),
                   decoration: BoxDecoration(
@@ -135,8 +128,13 @@ class _HomePageState extends State<HomePage> {
                           color: Colors.grey[400],
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Icon(Icons.shopping_bag,
-                            size: 40, color: Colors.white),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.asset(
+                            'assets/bag.png', 
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -144,7 +142,7 @@ class _HomePageState extends State<HomePage> {
 
                 const SizedBox(height: 20),
 
-                // Produk dari API
+              
                 FutureBuilder<List<Product>>(
                   future: products,
                   builder: (context, snapshot) {
@@ -208,7 +206,7 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector( // ✅ supaya klik gambar/teks/harga buka detail
+    return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
@@ -232,7 +230,6 @@ class ProductCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Gambar produk
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
@@ -278,7 +275,7 @@ class ProductCard extends StatelessWidget {
                           title: product.title,
                           date: now,
                           price: product.price,
-                          image: product.image, // ✅ tambahkan image ke Order
+                          image: product.image,
                         ),
                       );
 
