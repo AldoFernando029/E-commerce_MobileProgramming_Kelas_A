@@ -6,6 +6,7 @@ import '../order/order_model.dart';
 import 'search.dart';
 import 'package:marketplace_app/cart/cart.dart';
 import 'package:intl/intl.dart';
+import 'product_detail.dart'; // ✅ tambahkan ini
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -207,84 +208,95 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade200,
-            blurRadius: 6,
-            offset: const Offset(0, 4),
+    return GestureDetector( // ✅ supaya klik gambar/teks/harga buka detail
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ProductDetailPage(product: product),
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // Gambar produk
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(15)),
-              ),
-              child: Image.network(
-                product.image,
-                fit: BoxFit.contain,
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade200,
+              blurRadius: 6,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Gambar produk
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(15)),
+                ),
+                child: Image.network(
+                  product.image,
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                Text(
-                  product.title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 13),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  "\$${product.price.toStringAsFixed(2)}",
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  Text(
+                    product.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 13),
                   ),
-                ),
-                const SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: () {
-                    final now =
-                        DateFormat("dd MMM yyyy").format(DateTime.now());
-
-                    Provider.of<OrderProvider>(context, listen: false).addOrder(
-                      Order(
-                        title: product.title,
-                        date: now,
-                        price: product.price,
-                        image: product.image, // ✅ tambahkan image ke Order
-                      ),
-                    );
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Pesanan ditambahkan!")),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    minimumSize: const Size(double.infinity, 36),
+                  const SizedBox(height: 4),
+                  Text(
+                    "\$${product.price.toStringAsFixed(2)}",
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  child: const Text("Berbelanja"),
-                ),
-              ],
-            ),
-          )
-        ],
+                  const SizedBox(height: 8),
+                  ElevatedButton(
+                    onPressed: () {
+                      final now =
+                          DateFormat("dd MMM yyyy").format(DateTime.now());
+
+                      Provider.of<OrderProvider>(context, listen: false)
+                          .addOrder(
+                        Order(
+                          title: product.title,
+                          date: now,
+                          price: product.price,
+                          image: product.image, // ✅ tambahkan image ke Order
+                        ),
+                      );
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Pesanan ditambahkan!")),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      minimumSize: const Size(double.infinity, 36),
+                    ),
+                    child: const Text("Berbelanja"),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
