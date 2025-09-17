@@ -256,7 +256,7 @@ class ProductCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "\$${product.price.toStringAsFixed(2)}",
+                    "\Rp.${product.price.toStringAsFixed(2)}",
                     style: const TextStyle(
                       fontSize: 13,
                       color: Colors.red,

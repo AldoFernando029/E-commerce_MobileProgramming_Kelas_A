@@ -50,7 +50,7 @@ class ProductDetailPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                "\$${product.price.toStringAsFixed(2)}",
+                "\Rp.${product.price.toStringAsFixed(2)}",
                 style: const TextStyle(
                   fontSize: 20,
                   color: Colors.red,
