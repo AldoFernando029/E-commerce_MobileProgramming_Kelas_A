@@ -142,7 +142,7 @@ class CartPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  "\$${order.price.toStringAsFixed(2)}",
+                  "Rp ${order.price.toStringAsFixed(2)}",
                   style: const TextStyle(
                       color: Colors.red, fontWeight: FontWeight.bold),
                 ),

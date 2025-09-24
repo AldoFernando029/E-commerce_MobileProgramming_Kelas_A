@@ -137,7 +137,11 @@ class ProductDetailPage extends StatelessWidget {
           ),
           child: const Text(
             "Beli Sekarang",
-            style: TextStyle(fontSize: 16),
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white, // teks jadi putih
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ),

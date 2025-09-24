@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../pages/menupage.dart';
 import 'login.dart';
@@ -14,27 +16,28 @@ class _ProfilePageState extends State<ProfilePage> {
   String alamat =
       "PT Tembilahan Berkah Jaya, Perumahan Rajawali Sakti, Simpang Baru, Kec. Tampan, Kota Pekanbaru, Riau 28293. (Rumah Batu) (Disamping Tower). TAMPAN, KOTA PEKANBARU, RIAU, ID 28293";
 
-  String username = "User"; // default kalau belum ada
+  String username = "User"; 
+  String phone = "Belum ada nomor";
+  String? profileImagePath;
+
   final TextEditingController _alamatController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+
+  bool _isPicking = false;
 
   @override
   void initState() {
     super.initState();
-    _loadAlamat();
-    _loadUser();
+    _loadAllData();
   }
 
-  Future<void> _loadAlamat() async {
+  Future<void> _loadAllData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       alamat = prefs.getString('alamat') ?? alamat;
-    });
-  }
-
-  Future<void> _loadUser() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
       username = prefs.getString("username") ?? "User";
+      phone = prefs.getString("phone") ?? "Belum ada nomor";
+      profileImagePath = prefs.getString("profileImage");
     });
   }
 
@@ -43,9 +46,36 @@ class _ProfilePageState extends State<ProfilePage> {
     await prefs.setString('alamat', newAlamat);
   }
 
+  Future<void> _savePhone(String newPhone) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('phone', newPhone);
+  }
+
+  Future<void> _pickImage() async {
+    if (_isPicking) return;
+    _isPicking = true;
+
+    try {
+      final picker = ImagePicker();
+      final picked = await picker.pickImage(source: ImageSource.gallery);
+
+      if (picked != null) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString("profileImage", picked.path);
+
+        setState(() {
+          profileImagePath = picked.path;
+        });
+      }
+    } catch (e) {
+      debugPrint("Error picking image: $e");
+    } finally {
+      _isPicking = false;
+    }
+  }
+
   Future<void> _logout() async {
     final prefs = await SharedPreferences.getInstance();
-    // jangan hapus username/password
     await prefs.setBool("isLoggedIn", false);
 
     Navigator.pushReplacement(
@@ -56,6 +86,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _showBiodataPopup() {
     _alamatController.text = alamat;
+    _phoneController.text = phone;
 
     showDialog(
       context: context,
@@ -65,9 +96,17 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const CircleAvatar(
-                radius: 40,
-                backgroundImage: AssetImage("assets/profile.jpg"),
+              GestureDetector(
+                onTap: _isPicking ? null : _pickImage,
+                child: CircleAvatar(
+                  radius: 40,
+                  backgroundImage: profileImagePath != null
+                      ? FileImage(File(profileImagePath!))
+                      : null,
+                  child: profileImagePath == null
+                      ? const Icon(Icons.person, size: 40, color: Colors.grey)
+                      : null,
+                ),
               ),
               const SizedBox(height: 12),
               Text(
@@ -76,6 +115,19 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               const SizedBox(height: 6),
               const Text("Member: Gold"),
+              const SizedBox(height: 12),
+              const Text(
+                "Nomor Telepon:",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              TextField(
+                controller: _phoneController,
+                keyboardType: TextInputType.phone,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: "Masukkan nomor telepon",
+                ),
+              ),
               const SizedBox(height: 12),
               const Text(
                 "Alamat:",
@@ -100,8 +152,10 @@ class _ProfilePageState extends State<ProfilePage> {
             onPressed: () {
               setState(() {
                 alamat = _alamatController.text;
+                phone = _phoneController.text;
               });
               _saveAlamat(alamat);
+              _savePhone(phone);
               Navigator.pop(context);
             },
             child: const Text("Simpan"),
@@ -116,110 +170,137 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Profile info
-              Container(
-                padding: const EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    GestureDetector(
-                      onTap: _showBiodataPopup,
-                      child: const CircleAvatar(
-                        radius: 30,
-                        backgroundImage: AssetImage("assets/profile.jpg"),
+                    // Profile info
+                    Container(
+                      padding: const EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          username,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.orange[100],
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Text(
-                            "Member Gold",
-                            style: TextStyle(
-                              color: Colors.orange,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            onTap: _showBiodataPopup,
+                            child: CircleAvatar(
+                              radius: 30,
+                              backgroundImage: profileImagePath != null
+                                  ? FileImage(File(profileImagePath!))
+                                  : null,
+                              child: profileImagePath == null
+                                  ? const Icon(Icons.person,
+                                      size: 30, color: Colors.grey)
+                                  : null,
                             ),
                           ),
-                        )
+                          const SizedBox(width: 12),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                username,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                phone,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.orange[100],
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: const Text(
+                                  "Member Gold",
+                                  style: TextStyle(
+                                    color: Colors.orange,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    const Text(
+                      "Transaksi",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                    const SizedBox(height: 12),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _MenuIcon(
+                          icon: Icons.payment,
+                          label: "Pembayaran",
+                          onTap: () => _openMenuPage(context, "Pembayaran"),
+                        ),
+                        _MenuIcon(
+                          icon: Icons.inventory,
+                          label: "Proses",
+                          onTap: () => _openMenuPage(context, "Proses"),
+                        ),
+                        _MenuIcon(
+                          icon: Icons.local_shipping,
+                          label: "Dikirim",
+                          onTap: () => _openMenuPage(context, "Dikirim"),
+                        ),
+                        _MenuIcon(
+                          icon: Icons.inventory_2,
+                          label: "Sampai",
+                          onTap: () => _openMenuPage(context, "Sampai"),
+                        ),
+                        _MenuIcon(
+                          icon: Icons.reviews,
+                          label: "Review",
+                          onTap: () => _openMenuPage(context, "Review"),
+                        ),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
+            ),
 
-              const SizedBox(height: 20),
-
-              const Text(
-                "Transaksi",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-              const SizedBox(height: 12),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _MenuIcon(
-                    icon: Icons.payment,
-                    label: "Pembayaran",
-                    onTap: () => _openMenuPage(context, "Pembayaran"),
-                  ),
-                  _MenuIcon(
-                    icon: Icons.inventory,
-                    label: "Proses",
-                    onTap: () => _openMenuPage(context, "Proses"),
-                  ),
-                  _MenuIcon(
-                    icon: Icons.local_shipping,
-                    label: "Dikirim",
-                    onTap: () => _openMenuPage(context, "Dikirim"),
-                  ),
-                  _MenuIcon(
-                    icon: Icons.inventory_2,
-                    label: "Sampai",
-                    onTap: () => _openMenuPage(context, "Sampai"),
-                  ),
-                  _MenuIcon(
-                    icon: Icons.reviews,
-                    label: "Review",
-                    onTap: () => _openMenuPage(context, "Review"),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 20),
-              Center(
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
                 child: ElevatedButton(
                   onPressed: _logout,
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                  ),
                   child: const Text("Logout"),
                 ),
-              )
-            ],
-          ),
+              ),
+            )
+          ],
         ),
       ),
     );
