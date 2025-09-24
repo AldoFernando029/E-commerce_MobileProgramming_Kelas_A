@@ -16,6 +16,7 @@ dependencies:
   shared_preferences: ^2.2.2
   provider: ^6.0.5
   intl: ^0.19.0
+  image_picker: ^1.1.1
 
 dev_dependencies:
   flutter_test:
@@ -25,8 +26,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/profile.jpg
+    - assets/shoes.png
     - assets/bag.png
+    - assets/phone.png
 
   # assets:
   #   - assets/images/

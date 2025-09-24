@@ -17,11 +17,29 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late Future<List<Product>> products;
+  final PageController _pageController = PageController(viewportFraction: 0.9);
+  int _currentPage = 0;
 
   @override
   void initState() {
     super.initState();
     products = fetchProducts();
+
+    // Listen untuk update indikator
+    _pageController.addListener(() {
+      int next = _pageController.page!.round();
+      if (_currentPage != next) {
+        setState(() {
+          _currentPage = next;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -129,39 +147,47 @@ class _HomePageState extends State<HomePage> {
 
                 const SizedBox(height: 20),
 
-                // Banner Promo
-                Container(
-                  padding: const EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Row(
+                // Banner Promo (geser kanan-kiri + indikator)
+                SizedBox(
+                  height: 140,
+                  child: Column(
                     children: [
-                      const Expanded(
-                        child: Text(
-                          "Temukan Gaya & Kenyamanan dengan Fjällräven Kånken",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
+                      Expanded(
+                        child: PageView(
+                          controller: _pageController,
+                          children: [
+                            _promoCard(
+                              title: "Temukan Gaya & Kenyamanan dengan Fjällräven Kånken",
+                              image: "assets/bag.png",
+                            ),
+                            _promoCard(
+                              title: "Diskon 50% untuk Sepatu Olahraga Terbaru!",
+                              image: "assets/shoes.png",
+                            ),
+                            _promoCard(
+                              title: "Promo Gadget Kekinian dengan Harga Spesial",
+                              image: "assets/phone.png",
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(width: 10),
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[400],
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Image.asset(
-                            'assets/bag.png',
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(3, (index) {
+                          return AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            width: _currentPage == index ? 16 : 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: _currentPage == index
+                                  ? Colors.blue
+                                  : Colors.grey,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          );
+                        }),
                       ),
                     ],
                   ),
@@ -185,11 +211,11 @@ class _HomePageState extends State<HomePage> {
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
-                            childAspectRatio: 0.8,
-                          ),
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        childAspectRatio: 0.8,
+                      ),
                       itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
                         final product = snapshot.data![index];
@@ -219,6 +245,46 @@ class _HomePageState extends State<HomePage> {
           if (icon != null) Icon(icon, size: 18, color: color ?? Colors.black),
           if (icon != null) const SizedBox(width: 6),
           Text(label),
+        ],
+      ),
+    );
+  }
+
+  Widget _promoCard({required String title, required String image}) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 6),
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: Colors.grey[400],
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset(
+                image,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -314,7 +380,13 @@ class ProductCard extends StatelessWidget {
                       backgroundColor: Colors.blue,
                       minimumSize: const Size(double.infinity, 36),
                     ),
-                    child: const Text("Berbelanja"),
+                    child: const Text(
+                      "Berbelanja",
+                      style: TextStyle(
+                        color: Colors.white, // teks jadi putih
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ],
               ),
