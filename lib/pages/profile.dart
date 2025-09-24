@@ -16,7 +16,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String alamat =
       "PT Tembilahan Berkah Jaya, Perumahan Rajawali Sakti, Simpang Baru, Kec. Tampan, Kota Pekanbaru, Riau 28293. (Rumah Batu) (Disamping Tower). TAMPAN, KOTA PEKANBARU, RIAU, ID 28293";
 
-  String username = "User"; 
+  String username = "User";
   String phone = "Belum ada nomor";
   String? profileImagePath;
 
@@ -281,8 +281,53 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ],
                     ),
+
+                    const SizedBox(height: 20),
+                    const Divider(thickness: 1),
+
+                    // Box hanya teks "Alamat"
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          child: const Text(
+                            "Alamat",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    // Isi alamat di luar box
+                    Text(
+                      alamat,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                      ),
+                    ),
                   ],
                 ),
+              ),
+            ),
+
+            // Copyright
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "© 2025 PT Tembilahan Berkah Jaya\nAll rights reserved",
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 12, color: Colors.black54),
               ),
             ),
 
