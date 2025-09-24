@@ -35,7 +35,6 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                
                 Row(
                   children: [
                     Expanded(
@@ -73,36 +72,64 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const CartPage()),
+                    // Cart dengan badge
+                    Consumer<OrderProvider>(
+                      builder: (context, orderProvider, child) {
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const CartPage(),
+                              ),
+                            );
+                          },
+                          child: Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.grey[200],
+                                ),
+                                child: const Icon(Icons.shopping_cart_outlined),
+                              ),
+                              if (orderProvider.orders.isNotEmpty)
+                                Positioned(
+                                  right: 0,
+                                  top: -2,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: const BoxDecoration(
+                                      color: Colors.red,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Text(
+                                      "${orderProvider.orders.length}",
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
                         );
                       },
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.grey[200],
-                        ),
-                        child: const Icon(Icons.shopping_cart_outlined),
-                      ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 15),
 
                 // Hanya saldo AldiPay
-                Row(
-                  children: [
-                    _chip(label: "AldiPay\nSaldo : Rp. 900"),
-                  ],
-                ),
+                Row(children: [_chip(label: "AldiPay\nSaldo : Rp. 900")]),
 
                 const SizedBox(height: 20),
 
-                // Banner Promo pakai gambar lokal
+                // Banner Promo
                 Container(
                   padding: const EdgeInsets.all(15),
                   decoration: BoxDecoration(
@@ -131,7 +158,7 @@ class _HomePageState extends State<HomePage> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
                           child: Image.asset(
-                            'assets/bag.png', 
+                            'assets/bag.png',
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -142,7 +169,6 @@ class _HomePageState extends State<HomePage> {
 
                 const SizedBox(height: 20),
 
-              
                 FutureBuilder<List<Product>>(
                   future: products,
                   builder: (context, snapshot) {
@@ -159,11 +185,11 @@ class _HomePageState extends State<HomePage> {
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                        childAspectRatio: 0.8,
-                      ),
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                            childAspectRatio: 0.8,
+                          ),
                       itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
                         final product = snapshot.data![index];
@@ -171,7 +197,7 @@ class _HomePageState extends State<HomePage> {
                       },
                     );
                   },
-                )
+                ),
               ],
             ),
           ),
@@ -234,13 +260,11 @@ class ProductCard extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[300],
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(15)),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(15),
+                  ),
                 ),
-                child: Image.network(
-                  product.image,
-                  fit: BoxFit.contain,
-                ),
+                child: Image.network(product.image, fit: BoxFit.contain),
               ),
             ),
             Padding(
@@ -266,11 +290,14 @@ class ProductCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   ElevatedButton(
                     onPressed: () {
-                      final now =
-                          DateFormat("dd MMM yyyy").format(DateTime.now());
+                      final now = DateFormat(
+                        "dd MMM yyyy",
+                      ).format(DateTime.now());
 
-                      Provider.of<OrderProvider>(context, listen: false)
-                          .addOrder(
+                      Provider.of<OrderProvider>(
+                        context,
+                        listen: false,
+                      ).addOrder(
                         Order(
                           title: product.title,
                           date: now,
@@ -291,7 +318,7 @@ class ProductCard extends StatelessWidget {
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

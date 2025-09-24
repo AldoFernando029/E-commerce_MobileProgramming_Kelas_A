@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../pages/menupage.dart';
+import 'login.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -13,12 +14,14 @@ class _ProfilePageState extends State<ProfilePage> {
   String alamat =
       "PT Tembilahan Berkah Jaya, Perumahan Rajawali Sakti, Simpang Baru, Kec. Tampan, Kota Pekanbaru, Riau 28293. (Rumah Batu) (Disamping Tower). TAMPAN, KOTA PEKANBARU, RIAU, ID 28293";
 
+  String username = "User"; // default kalau belum ada
   final TextEditingController _alamatController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _loadAlamat();
+    _loadUser();
   }
 
   Future<void> _loadAlamat() async {
@@ -28,9 +31,27 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
+  Future<void> _loadUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      username = prefs.getString("username") ?? "User";
+    });
+  }
+
   Future<void> _saveAlamat(String newAlamat) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('alamat', newAlamat);
+  }
+
+  Future<void> _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    // jangan hapus username/password
+    await prefs.setBool("isLoggedIn", false);
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginPage()),
+    );
   }
 
   void _showBiodataPopup() {
@@ -49,9 +70,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 backgroundImage: AssetImage("assets/profile.jpg"),
               ),
               const SizedBox(height: 12),
-              const Text(
-                "Nama: Muhammad Aldi Rifky Pasaribu",
-                style: TextStyle(fontWeight: FontWeight.bold),
+              Text(
+                "Nama: $username",
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 6),
               const Text("Member: Gold"),
@@ -110,7 +131,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Row(
                   children: [
                     GestureDetector(
-                      onTap: _showBiodataPopup, 
+                      onTap: _showBiodataPopup,
                       child: const CircleAvatar(
                         radius: 30,
                         backgroundImage: AssetImage("assets/profile.jpg"),
@@ -120,9 +141,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Muhammad Aldi Rifky Pasaribu",
-                          style: TextStyle(
+                        Text(
+                          username,
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
@@ -188,6 +209,15 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ],
               ),
+
+              const SizedBox(height: 20),
+              Center(
+                child: ElevatedButton(
+                  onPressed: _logout,
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  child: const Text("Logout"),
+                ),
+              )
             ],
           ),
         ),
