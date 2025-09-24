@@ -75,7 +75,10 @@ class CartPage extends StatelessWidget {
                             borderRadius: BorderRadius.circular(25),
                           ),
                         ),
-                        child: const Text("Beli"),
+                        child: const Text(
+                          "Beli",
+                          style: TextStyle(color: Colors.white), // ✅ Putih
+                        ),
                       ),
                     ],
                   ),

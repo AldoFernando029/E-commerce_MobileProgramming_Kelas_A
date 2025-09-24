@@ -124,13 +124,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
             ElevatedButton(
               onPressed: () async {
-            
                 await _simpanPesanan();
-               
                 context.read<OrderProvider>().checkoutSelected();
 
                 if (!mounted) return;
-               
+
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
@@ -138,7 +136,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   ),
                 );
 
-                
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Pesanan berhasil dikonfirmasi!")),
                 );
@@ -148,7 +145,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               ),
-              child: const Text("Konfirmasi Pesanan"),
+              child: const Text(
+                "Konfirmasi Pesanan",
+                style: TextStyle(color: Colors.white), // ✅ Putih
+              ),
             ),
           ],
         ),
