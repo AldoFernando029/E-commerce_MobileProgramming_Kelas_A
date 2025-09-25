@@ -156,32 +156,14 @@ class _HomePageState extends State<HomePage> {
                           icon: Icons.account_balance_wallet_outlined,
                           label: "KuyPay  |  $formattedBalance",
                           color: Colors.blue,
-<<<<<<< HEAD
                           boxColor: const Color.fromARGB(255, 200, 238, 255), // box biru muda
-=======
-                          boxColor: const Color.fromARGB(
-                            255,
-                            200,
-                            238,
-                            255,
-                          ), // box biru muda
->>>>>>> fd6365ecb4e4e397e86d2df91396f6ee3efb6501
                         ),
                         const SizedBox(width: 10),
                         _chip(
                           icon: Icons.shopping_bag_outlined,
                           label: "Kuy Belanja Aja!",
                           color: Colors.green,
-<<<<<<< HEAD
                           boxColor: const Color.fromARGB(255, 200, 255, 200), // box hijau muda
-=======
-                          boxColor: const Color.fromARGB(
-                            255,
-                            200,
-                            255,
-                            200,
-                          ), // box hijau muda
->>>>>>> fd6365ecb4e4e397e86d2df91396f6ee3efb6501
                         ),
                       ],
                     );
