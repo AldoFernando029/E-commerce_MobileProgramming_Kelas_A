@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:provider/provider.dart';
 import '../order/order_model.dart';
 import '../order/order_provider.dart';
+import '../pay/kuypay.dart'; // ✅ KuyPay ditambahkan
 import 'menupage.dart';
 
 class CheckoutPage extends StatefulWidget {
@@ -27,22 +28,20 @@ class _CheckoutPageState extends State<CheckoutPage> {
   Future<void> _loadAlamat() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      alamat = prefs.getString('alamat') ??
+      alamat =
+          prefs.getString('alamat') ??
           "Alamat belum diatur. Silakan update di Profile.";
     });
   }
 
   Future<void> _simpanPesanan() async {
     final prefs = await SharedPreferences.getInstance();
-
     final existingOrders = prefs.getStringList('orders') ?? [];
-
     final newOrders = widget.selectedOrders
         .map((order) => jsonEncode(order.toJson()))
         .toList();
 
     existingOrders.addAll(newOrders);
-
     await prefs.setStringList('orders', existingOrders);
   }
 
@@ -54,10 +53,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Checkout"),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text("Checkout"), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -124,30 +120,44 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
             ElevatedButton(
               onPressed: () async {
-                await _simpanPesanan();
-                context.read<OrderProvider>().checkoutSelected();
+                final kuypay = Provider.of<KuyPay>(context, listen: false);
 
-                if (!mounted) return;
+                if (kuypay.pay(totalHarga)) {
+                  await _simpanPesanan();
+                  context.read<OrderProvider>().checkoutSelected();
 
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const MenuPage(),
-                  ),
-                );
+                  if (!mounted) return;
 
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Pesanan berhasil dikonfirmasi!")),
-                );
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => const MenuPage()),
+                  );
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        "Pesanan berhasil dikonfirmasi! Saldo berkurang Rp$totalHarga",
+                      ),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Saldo tidak cukup untuk konfirmasi!"),
+                    ),
+                  );
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
               child: const Text(
                 "Konfirmasi Pesanan",
-                style: TextStyle(color: Colors.white), // ✅ Putih
+                style: TextStyle(color: Colors.white),
               ),
             ),
           ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'order/order_provider.dart';
+import 'pay/kuypay.dart'; // ✅ KuyPay ditambahkan
 import 'pages/splash.dart';
 
 void main() {
@@ -8,6 +9,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => OrderProvider()),
+        ChangeNotifierProvider(create: (_) => KuyPay()), // ✅ KuyPay Provider
       ],
       child: const MyApp(),
     ),
