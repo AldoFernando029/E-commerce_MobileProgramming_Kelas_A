@@ -28,7 +28,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
   Future<void> _loadAlamat() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      alamat = prefs.getString('alamat') ??
+      alamat =
+          prefs.getString('alamat') ??
           "Alamat belum diatur. Silakan update di Profile.";
     });
   }
@@ -36,8 +37,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
   Future<void> _simpanPesanan() async {
     final prefs = await SharedPreferences.getInstance();
     final existingOrders = prefs.getStringList('orders') ?? [];
+<<<<<<< HEAD
     final newOrders =
         widget.selectedOrders.map((order) => jsonEncode(order.toJson())).toList();
+=======
+    final newOrders = widget.selectedOrders
+        .map((order) => jsonEncode(order.toJson()))
+        .toList();
+>>>>>>> fd6365ecb4e4e397e86d2df91396f6ee3efb6501
 
     existingOrders.addAll(newOrders);
     await prefs.setStringList('orders', existingOrders);
@@ -51,10 +58,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Checkout"),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text("Checkout"), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -136,20 +140,34 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
+<<<<<<< HEAD
                         content: Text(
                             "Pesanan berhasil dikonfirmasi! Saldo berkurang Rp$totalHarga")),
+=======
+                      content: Text(
+                        "Pesanan berhasil dikonfirmasi! Saldo berkurang Rp$totalHarga",
+                      ),
+                    ),
+>>>>>>> fd6365ecb4e4e397e86d2df91396f6ee3efb6501
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
+<<<<<<< HEAD
                         content: Text("Saldo tidak cukup untuk konfirmasi!")),
+=======
+                      content: Text("Saldo tidak cukup untuk konfirmasi!"),
+                    ),
+>>>>>>> fd6365ecb4e4e397e86d2df91396f6ee3efb6501
                   );
                 }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
               child: const Text(
                 "Konfirmasi Pesanan",
