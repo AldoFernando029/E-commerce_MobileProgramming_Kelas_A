@@ -12,85 +12,110 @@ class ProductDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final formattedPrice = NumberFormat.currency(
+      locale: 'id',
+      symbol: 'Rp',
+      decimalDigits: 2,
+    ).format(product.price);
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: Text(product.title, maxLines: 1, overflow: TextOverflow.ellipsis),
+        title: Text(
+          product.title,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
         backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        foregroundColor: Colors.black87,
         elevation: 1,
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-      
+            // Gambar produk dengan efek bayangan
             Container(
               height: 300,
               width: double.infinity,
-              color: Colors.grey[200],
-              child: Image.network(product.image, fit: BoxFit.contain),
+              margin: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.network(product.image, fit: BoxFit.contain),
+              ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
 
-        
+            // Judul Produk
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 product.title,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 18,
+                  fontSize: 20,
                 ),
               ),
             ),
             const SizedBox(height: 8),
 
-           
+            // Harga
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                "\Rp.${product.price.toStringAsFixed(2)}",
+                formattedPrice,
                 style: const TextStyle(
                   fontSize: 20,
-                  color: Colors.red,
+                  color: Colors.redAccent,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
             const SizedBox(height: 8),
 
-           
+            // Rating
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 children: [
-                  const Icon(Icons.star, color: Colors.amber, size: 18),
+                  const Icon(Icons.star, color: Colors.amber, size: 20),
                   const SizedBox(width: 4),
                   Text(
                     "${product.rating} (${product.ratingCount} ulasan)",
-                    style: const TextStyle(fontSize: 13, color: Colors.black54),
+                    style: const TextStyle(fontSize: 14, color: Colors.black54),
                   ),
                 ],
               ),
             ),
-            const Divider(height: 30),
+            const Divider(height: 30, thickness: 1.2),
 
-           
+            // Deskripsi
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 product.description,
                 style: TextStyle(
                   color: Colors.grey[800],
-                  fontSize: 14,
-                  height: 1.5,
+                  fontSize: 15,
+                  height: 1.6,
                 ),
               ),
             ),
             const SizedBox(height: 12),
 
-            
+            // Kategori
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
@@ -102,17 +127,17 @@ class ProductDetailPage extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: 20),
           ],
         ),
       ),
 
-      
+      // Tombol Beli
       bottomNavigationBar: Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: ElevatedButton(
           onPressed: () {
-            final now =
-                DateFormat("yyyy-MM-dd HH:mm").format(DateTime.now());
+            final now = DateFormat("yyyy-MM-dd HH:mm").format(DateTime.now());
 
             context.read<OrderProvider>().addOrder(
                   Order(
@@ -129,17 +154,19 @@ class ProductDetailPage extends StatelessWidget {
             );
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue,
+            backgroundColor: Colors.blueAccent,
             minimumSize: const Size(double.infinity, 50),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(15),
             ),
+            elevation: 5,
+            shadowColor: Colors.black26,
           ),
           child: const Text(
             "Beli Sekarang",
             style: TextStyle(
               fontSize: 16,
-              color: Colors.white, // teks jadi putih
+              color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
           ),

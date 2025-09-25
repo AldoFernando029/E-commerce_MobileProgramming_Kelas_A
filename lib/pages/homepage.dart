@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';  
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../utils/utils.dart';
 import '../order/order_provider.dart';
@@ -49,10 +49,11 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.all(14.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // 🔎 Search + Cart
                 Row(
                   children: [
                     Expanded(
@@ -60,7 +61,14 @@ class _HomePageState extends State<HomePage> {
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(25),
-                          color: Colors.grey[200],
+                          color: Colors.grey[100],
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
                         child: Row(
                           children: [
@@ -108,7 +116,14 @@ class _HomePageState extends State<HomePage> {
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: Colors.grey[200],
+                                  color: Colors.grey[100],
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.2),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
                                 ),
                                 child: const Icon(Icons.shopping_cart_outlined),
                               ),
@@ -126,7 +141,7 @@ class _HomePageState extends State<HomePage> {
                                       "${orderProvider.orders.length}",
                                       style: const TextStyle(
                                         color: Colors.white,
-                                        fontSize: 12,
+                                        fontSize: 11,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -139,7 +154,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 15),
+
+                const SizedBox(height: 18),
 
                 // ✅ KuyPay + Kuy Belanja Aja!
                 Consumer<KuyPay>(
@@ -152,28 +168,36 @@ class _HomePageState extends State<HomePage> {
 
                     return Row(
                       children: [
-                        _chip(
-                          icon: Icons.account_balance_wallet_outlined,
-                          label: "KuyPay  |  $formattedBalance",
-                          color: Colors.blue,
-                          boxColor: const Color.fromARGB(255, 200, 238, 255), // box biru muda
+                        Expanded(
+                          child: InkWell(
+                            onTap: () => _showTopUpDialog(context),
+                            child: _chip(
+                              icon: Icons.account_balance_wallet_outlined,
+                              label: "KuyPay  |  $formattedBalance",
+                              color: Colors.blue,
+                              boxColor: const Color.fromARGB(255, 220, 240, 255),
+                            ),
+                          ),
                         ),
                         const SizedBox(width: 10),
-                        _chip(
-                          icon: Icons.shopping_bag_outlined,
-                          label: "Kuy Belanja Aja!",
-                          color: Colors.green,
-                          boxColor: const Color.fromARGB(255, 200, 255, 200), // box hijau muda
+                        Expanded(
+                          child: _chip(
+                            icon: Icons.shopping_bag_outlined,
+                            label: "Kuy Belanja Aja!",
+                            color: Colors.green,
+                            boxColor: const Color.fromARGB(255, 220, 255, 220),
+                          ),
                         ),
                       ],
                     );
                   },
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 22),
 
+                // 🖼 Banner Promo
                 SizedBox(
-                  height: 140,
+                  height: 120,
                   child: Column(
                     children: [
                       Expanded(
@@ -220,8 +244,9 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 22),
 
+                // 📦 Produk
                 FutureBuilder<List<Product>>(
                   future: products,
                   builder: (context, snapshot) {
@@ -238,11 +263,11 @@ class _HomePageState extends State<HomePage> {
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
-                            childAspectRatio: 0.8,
-                          ),
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                        childAspectRatio: 0.78,
+                      ),
                       itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
                         final product = snapshot.data![index];
@@ -267,21 +292,25 @@ class _HomePageState extends State<HomePage> {
     Color? boxColor,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(18),
         color: boxColor ?? Colors.grey[200],
       ),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (icon != null) Icon(icon, size: 20, color: color ?? Colors.black),
+          if (icon != null) Icon(icon, size: 18, color: color ?? Colors.black),
           if (icon != null) const SizedBox(width: 6),
-          Text(
-            label,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: color ?? Colors.black,
+          Flexible(
+            child: Text(
+              label,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+                color: color ?? Colors.black,
+              ),
             ),
           ),
         ],
@@ -292,25 +321,35 @@ class _HomePageState extends State<HomePage> {
   Widget _promoCard({required String title, required String image}) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 6),
-      padding: const EdgeInsets.all(15),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(15),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.15),
+            blurRadius: 6,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         children: [
           Expanded(
             child: Text(
               title,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+              ),
             ),
           ),
           const SizedBox(width: 10),
           Container(
-            width: 80,
-            height: 80,
+            width: 70,
+            height: 70,
             decoration: BoxDecoration(
-              color: Colors.grey[400],
+              color: Colors.grey[200],
               borderRadius: BorderRadius.circular(10),
             ),
             child: ClipRRect(
@@ -320,6 +359,137 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
+    );
+  }
+
+  // 🔹 Dialog Top Up KuyPay (Estetik) + Sisa Saldo
+  void _showTopUpDialog(BuildContext context) {
+    final controller = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        final kuypay = context.watch<KuyPay>();
+        final formattedBalance = NumberFormat.currency(
+          locale: 'id',
+          symbol: 'Rp',
+          decimalDigits: 2,
+        ).format(kuypay.balance);
+
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Icon Wallet
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.account_balance_wallet_outlined,
+                    color: Colors.blue,
+                    size: 40,
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Title
+                const Text(
+                  "Top Up KuyPay",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                // ✅ Sisa Saldo
+                Text(
+                  "Sisa Saldo: $formattedBalance",
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.black54,
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Input Jumlah
+                TextField(
+                  controller: controller,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: "Masukkan jumlah",
+                    prefixText: "Rp ",
+                    filled: true,
+                    fillColor: Colors.grey[100],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Tombol Aksi
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Tombol Batal
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.grey[600],
+                      ),
+                      child: const Text("Batal"),
+                    ),
+
+                    // Tombol Top Up
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        final amount = double.tryParse(controller.text) ?? 0;
+                        if (amount > 0) {
+                          context.read<KuyPay>().topUp(amount);
+                          Navigator.pop(context);
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              backgroundColor: Colors.green,
+                              content: Text(
+                                "Top up berhasil Rp${amount.toStringAsFixed(0)}",
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      icon: const Icon(Icons.check_circle_outline, size: 18),
+                      label: const Text("Top Up"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -342,7 +512,7 @@ class ProductCard extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(14),
           color: Colors.white,
           boxShadow: [
             BoxShadow(
@@ -358,9 +528,9 @@ class ProductCard extends StatelessWidget {
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: Colors.grey[100],
                   borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(15),
+                    top: Radius.circular(14),
                   ),
                 ),
                 child: Image.network(product.image, fit: BoxFit.contain),

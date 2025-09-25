@@ -207,7 +207,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 3),
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: const Color.fromARGB(255, 255, 255, 255),
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               child: const Text("Member Gold",
@@ -238,6 +238,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                     // Transaksi Card (icon tanpa label)
                     Card(
+                      color: const Color.fromARGB(255, 255, 255, 255),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16)),
                       elevation: 2,
@@ -277,6 +278,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     const SizedBox(height: 8),
 
                     Card(
+                      color: const Color.fromARGB(255, 255, 255, 255),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12)),
                       elevation: 2,
@@ -309,7 +311,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    "© 2025 PT Tembilahan Berkah Jaya\nAll rights reserved",
+                    "© 2025 PT Muhammad Aldi Rifky Pasaribu\nAll rights reserved",
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 12, color: Colors.black54),
                   ),

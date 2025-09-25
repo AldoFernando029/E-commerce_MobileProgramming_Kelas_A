@@ -14,9 +14,9 @@ class _NavigasiBawahState extends State<NavigasiBawah> {
   int _selectedIndex = 1;
 
   final List<Widget> _pages = const [
-    ProfilePage(), 
-    HomePage(),    
-    MenuPage(),    
+    ProfilePage(),
+    HomePage(),
+    MenuPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -32,8 +32,8 @@ class _NavigasiBawahState extends State<NavigasiBawah> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: Colors.blue, // ✅ warna biru saat dipilih
+        unselectedItemColor: const Color.fromARGB(255, 0, 0, 0),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),

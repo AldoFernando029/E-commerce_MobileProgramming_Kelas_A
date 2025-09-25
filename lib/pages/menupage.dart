@@ -50,18 +50,25 @@ class _MenuPageState extends State<MenuPage> {
 
       setState(() {
         for (var order in orders) {
-          
           if (order.statusIndex < statusList.length - 1) {
             order.statusIndex++;
           }
         }
       });
 
-      
       final prefs = await SharedPreferences.getInstance();
       final encoded = orders.map((o) => jsonEncode(o.toJson())).toList();
       await prefs.setStringList('orders', encoded);
     });
+  }
+
+  Future<void> _deleteOrder(Order order) async {
+    setState(() {
+      orders.remove(order);
+    });
+    final prefs = await SharedPreferences.getInstance();
+    final encoded = orders.map((o) => jsonEncode(o.toJson())).toList();
+    await prefs.setStringList('orders', encoded);
   }
 
   @override
@@ -93,36 +100,45 @@ class _MenuPageState extends State<MenuPage> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(12),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start, // ✅ teks rata kiri
           children: [
             const Text(
               "Pesanan Saya",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
+              ),
             ),
             const SizedBox(height: 16),
 
-            // ✅ Filter Status
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: List.generate(statusList.length, (index) {
-                final isSelected = filterStatus == statusList[index];
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      if (isSelected) {
-                        filterStatus = null;
-                      } else {
-                        filterStatus = statusList[index];
-                      }
-                    });
-                  },
-                  child: _StatusIcon(
-                    icon: _getIcon(statusList[index]),
-                    label: statusList[index],
-                    active: isSelected,
-                  ),
-                );
-              }),
+            // ✅ Filter Status center
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(statusList.length, (index) {
+                  final isSelected = filterStatus == statusList[index];
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (isSelected) {
+                          filterStatus = null;
+                        } else {
+                          filterStatus = statusList[index];
+                        }
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: _StatusIcon(
+                        icon: _getIcon(statusList[index]),
+                        label: statusList[index],
+                        active: isSelected,
+                      ),
+                    ),
+                  );
+                }),
+              ),
             ),
             const SizedBox(height: 20),
 
@@ -145,6 +161,7 @@ class _MenuPageState extends State<MenuPage> {
                           product: order.title,
                           price: order.price * order.quantity,
                           status: statusList[order.statusIndex],
+                          onDelete: () => _deleteOrder(order),
                         ))
                     .toList(),
               ),
@@ -193,11 +210,14 @@ class _StatusIcon extends StatelessWidget {
           child: Icon(icon, color: active ? Colors.white : Colors.black),
         ),
         const SizedBox(height: 6),
-        Text(label,
-            style: TextStyle(
-                fontSize: 12,
-                fontWeight: active ? FontWeight.bold : FontWeight.normal,
-                color: active ? Colors.blue : Colors.black)),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: active ? FontWeight.bold : FontWeight.normal,
+            color: active ? Colors.blue : Colors.black,
+          ),
+        ),
       ],
     );
   }
@@ -209,6 +229,7 @@ class _TransaksiCard extends StatelessWidget {
   final String product;
   final double price;
   final String status;
+  final VoidCallback onDelete;
 
   const _TransaksiCard({
     required this.title,
@@ -216,21 +237,22 @@ class _TransaksiCard extends StatelessWidget {
     required this.product,
     required this.price,
     required this.status,
+    required this.onDelete,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10), // ✅ compact
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(color: Colors.grey.shade300),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.shade200,
-            blurRadius: 6,
+            blurRadius: 5,
             offset: const Offset(0, 3),
           ),
         ],
@@ -238,49 +260,71 @@ class _TransaksiCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
-                  const Icon(Icons.shopping_bag, color: Colors.black54),
-                  const SizedBox(width: 8),
+                  const Icon(Icons.shopping_bag,
+                      color: Colors.blue, size: 20), // ✅ biru
+                  const SizedBox(width: 6),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(title,
                           style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 14)),
+                              fontWeight: FontWeight.bold, fontSize: 13)),
                       Text(date,
                           style: TextStyle(
-                              color: Colors.grey[600], fontSize: 12)),
+                              color: Colors.grey[600], fontSize: 11)),
                     ],
                   )
                 ],
               ),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Colors.green.shade50,
-                  border: Border.all(color: Colors.green),
-                ),
-                child: Text(
-                  status,
-                  style: const TextStyle(color: Colors.green, fontSize: 12),
-                ),
-              )
+              Row(
+                children: [
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.green.shade50,
+                      border: Border.all(color: Colors.green),
+                    ),
+                    child: Text(
+                      status,
+                      style: const TextStyle(color: Colors.green, fontSize: 11),
+                    ),
+                  ),
+                  if (status == "Review") ...[
+                    const SizedBox(width: 6),
+                    // ✅ tombol delete lebih kecil agar box seragam
+                    InkWell(
+                      onTap: onDelete,
+                      borderRadius: BorderRadius.circular(20),
+                      child: const Padding(
+                        padding: EdgeInsets.all(4),
+                        child: Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                          size: 18,
+                        ),
+                      ),
+                    ),
+                  ]
+                ],
+              ),
             ],
           ),
-          const Divider(height: 20),
+          const Divider(height: 18),
           Text(product,
-              style: const TextStyle(fontSize: 14, color: Colors.black)),
-          const SizedBox(height: 6),
+              style: const TextStyle(fontSize: 13, color: Colors.black)),
+          const SizedBox(height: 4),
           Text(
             "Rp${price.toStringAsFixed(2)}",
             style: const TextStyle(
-                fontSize: 14, color: Colors.red, fontWeight: FontWeight.bold),
+                fontSize: 13, color: Colors.red, fontWeight: FontWeight.bold),
           ),
         ],
       ),

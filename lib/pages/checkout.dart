@@ -51,7 +51,17 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Checkout"), centerTitle: true),
+      backgroundColor: Colors.white, // ✅ background putih
+      appBar: AppBar(
+        title: const Text(
+          "Checkout",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 0,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -63,33 +73,73 @@ class _CheckoutPageState extends State<CheckoutPage> {
             ),
             const SizedBox(height: 8),
             Container(
-              padding: const EdgeInsets.all(12),
+              width: double.infinity,
+              padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(12),
                 color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.shade200,
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  )
+                ],
               ),
-              child: Text(alamat),
+              child: Text(
+                alamat,
+                style: const TextStyle(fontSize: 14, color: Colors.black87),
+              ),
             ),
             const SizedBox(height: 20),
 
             Expanded(
               child: ListView.separated(
                 itemCount: widget.selectedOrders.length,
-                separatorBuilder: (_, __) => const Divider(),
+                separatorBuilder: (_, __) => const Divider(height: 20),
                 itemBuilder: (context, index) {
                   final order = widget.selectedOrders[index];
-                  return ListTile(
-                    leading: Image.network(order.image, width: 50, height: 50),
-                    title: Text(order.title),
-                    subtitle: Text(
-                      "${order.quantity} x Rp${order.price.toStringAsFixed(2)}",
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.shade100,
+                          blurRadius: 5,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
-                    trailing: Text(
-                      "Rp${(order.price * order.quantity).toStringAsFixed(2)}",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.red,
+                    child: ListTile(
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      leading: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          order.image,
+                          width: 55,
+                          height: 55,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      title: Text(
+                        order.title,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 14),
+                      ),
+                      subtitle: Text(
+                        "${order.quantity} x Rp${order.price.toStringAsFixed(2)}",
+                        style: const TextStyle(color: Colors.grey, fontSize: 13),
+                      ),
+                      trailing: Text(
+                        "Rp${(order.price * order.quantity).toStringAsFixed(2)}",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
                   );
@@ -97,64 +147,83 @@ class _CheckoutPageState extends State<CheckoutPage> {
               ),
             ),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Total:",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  "Rp${totalHarga.toStringAsFixed(2)}",
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green,
+            const SizedBox(height: 10),
+
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Total:",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                ),
-              ],
+                  Text(
+                    "Rp${totalHarga.toStringAsFixed(2)}",
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 20),
 
-            ElevatedButton(
-              onPressed: () async {
-                final kuypay = Provider.of<KuyPay>(context, listen: false);
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  final kuypay = Provider.of<KuyPay>(context, listen: false);
 
-                if (kuypay.pay(totalHarga)) {
-                  await _simpanPesanan();
-                  context.read<OrderProvider>().checkoutSelected();
+                  if (kuypay.pay(totalHarga)) {
+                    await _simpanPesanan();
+                    context.read<OrderProvider>().checkoutSelected();
 
-                  if (!mounted) return;
+                    if (!mounted) return;
 
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => const MenuPage()),
-                  );
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const MenuPage()),
+                    );
 
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        "Pesanan berhasil dikonfirmasi! Saldo berkurang Rp$totalHarga",
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          "Pesanan berhasil dikonfirmasi! Saldo berkurang Rp$totalHarga",
+                        ),
                       ),
-                    ),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text("Saldo tidak cukup untuk konfirmasi!")),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text("Saldo tidak cukup untuk konfirmasi!")),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 14,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 3,
                 ),
-              ),
-              child: const Text(
-                "Konfirmasi Pesanan",
-                style: TextStyle(color: Colors.white),
+                child: const Text(
+                  "Konfirmasi Pesanan",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
           ],
