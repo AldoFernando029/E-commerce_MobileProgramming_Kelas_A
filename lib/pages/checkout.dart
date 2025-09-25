@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:provider/provider.dart';
 import '../order/order_model.dart';
 import '../order/order_provider.dart';
+import '../pay/kuypay.dart'; // ✅ KuyPay ditambahkan
 import 'menupage.dart';
 
 class CheckoutPage extends StatefulWidget {
@@ -34,15 +35,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   Future<void> _simpanPesanan() async {
     final prefs = await SharedPreferences.getInstance();
-
     final existingOrders = prefs.getStringList('orders') ?? [];
-
-    final newOrders = widget.selectedOrders
-        .map((order) => jsonEncode(order.toJson()))
-        .toList();
+    final newOrders =
+        widget.selectedOrders.map((order) => jsonEncode(order.toJson())).toList();
 
     existingOrders.addAll(newOrders);
-
     await prefs.setStringList('orders', existingOrders);
   }
 
@@ -124,21 +121,30 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
             ElevatedButton(
               onPressed: () async {
-                await _simpanPesanan();
-                context.read<OrderProvider>().checkoutSelected();
+                final kuypay = Provider.of<KuyPay>(context, listen: false);
 
-                if (!mounted) return;
+                if (kuypay.pay(totalHarga)) {
+                  await _simpanPesanan();
+                  context.read<OrderProvider>().checkoutSelected();
 
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const MenuPage(),
-                  ),
-                );
+                  if (!mounted) return;
 
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Pesanan berhasil dikonfirmasi!")),
-                );
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => const MenuPage()),
+                  );
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text(
+                            "Pesanan berhasil dikonfirmasi! Saldo berkurang Rp$totalHarga")),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text("Saldo tidak cukup untuk konfirmasi!")),
+                  );
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
@@ -147,7 +153,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
               ),
               child: const Text(
                 "Konfirmasi Pesanan",
-                style: TextStyle(color: Colors.white), // ✅ Putih
+                style: TextStyle(color: Colors.white),
               ),
             ),
           ],

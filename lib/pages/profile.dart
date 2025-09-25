@@ -91,53 +91,42 @@ class _ProfilePageState extends State<ProfilePage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Biodata"),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text("Edit Biodata",
+            style: TextStyle(fontWeight: FontWeight.bold)),
         content: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               GestureDetector(
                 onTap: _isPicking ? null : _pickImage,
                 child: CircleAvatar(
-                  radius: 40,
+                  radius: 45,
                   backgroundImage: profileImagePath != null
                       ? FileImage(File(profileImagePath!))
                       : null,
                   child: profileImagePath == null
-                      ? const Icon(Icons.person, size: 40, color: Colors.grey)
+                      ? const Icon(Icons.person, size: 45, color: Colors.grey)
                       : null,
                 ),
               ),
-              const SizedBox(height: 12),
-              Text(
-                "Nama: $username",
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 6),
-              const Text("Member: Gold"),
-              const SizedBox(height: 12),
-              const Text(
-                "Nomor Telepon:",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
+              const SizedBox(height: 16),
               TextField(
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
                 decoration: const InputDecoration(
+                  labelText: "Nomor Telepon",
                   border: OutlineInputBorder(),
-                  hintText: "Masukkan nomor telepon",
+                  prefixIcon: Icon(Icons.phone),
                 ),
               ),
               const SizedBox(height: 12),
-              const Text(
-                "Alamat:",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
               TextField(
                 controller: _alamatController,
-                maxLines: 4,
+                maxLines: 3,
                 decoration: const InputDecoration(
+                  labelText: "Alamat",
                   border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.home),
                 ),
               ),
             ],
@@ -145,10 +134,10 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Tutup"),
-          ),
-          ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Batal")),
+          ElevatedButton.icon(
+            icon: const Icon(Icons.save),
             onPressed: () {
               setState(() {
                 alamat = _alamatController.text;
@@ -158,7 +147,7 @@ class _ProfilePageState extends State<ProfilePage> {
               _savePhone(phone);
               Navigator.pop(context);
             },
-            child: const Text("Simpan"),
+            label: const Text("Simpan"),
           ),
         ],
       ),
@@ -168,152 +157,133 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: SafeArea(
         child: Column(
           children: [
+            // Bagian Profile Card (diperkecil)
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(100)),
+                color: Colors.blue,
+                elevation: 4,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                        onTap: _showBiodataPopup,
+                        child: CircleAvatar(
+                          radius: 30, // lebih kecil
+                          backgroundColor: Colors.white,
+                          backgroundImage: profileImagePath != null
+                              ? FileImage(File(profileImagePath!))
+                              : null,
+                          child: profileImagePath == null
+                              ? const Icon(Icons.person,
+                                  size: 30, color: Colors.grey)
+                              : null,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(username,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: Colors.white)),
+                            const SizedBox(height: 4),
+                            Text(phone,
+                                style: const TextStyle(
+                                    fontSize: 12, color: Colors.white70)),
+                            const SizedBox(height: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: const Text("Member Gold",
+                                  style: TextStyle(
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 11)),
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Profile info
-                    Container(
-                      padding: const EdgeInsets.all(15),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        children: [
-                          GestureDetector(
-                            onTap: _showBiodataPopup,
-                            child: CircleAvatar(
-                              radius: 30,
-                              backgroundImage: profileImagePath != null
-                                  ? FileImage(File(profileImagePath!))
-                                  : null,
-                              child: profileImagePath == null
-                                  ? const Icon(Icons.person,
-                                      size: 30, color: Colors.grey)
-                                  : null,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                username,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                phone,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black54,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: Colors.orange[100],
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: const Text(
-                                  "Member Gold",
-                                  style: TextStyle(
-                                    color: Colors.orange,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              )
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    const Text(
-                      "Transaksi",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                    ),
+                    const Text("Transaksi",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16)),
                     const SizedBox(height: 12),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _MenuIcon(
-                          icon: Icons.payment,
-                          label: "Pembayaran",
-                          onTap: () => _openMenuPage(context, "Pembayaran"),
+                    // Transaksi Card (icon tanpa label)
+                    Card(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16)),
+                      elevation: 2,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            _MenuIcon(
+                                icon: Icons.payment,
+                                onTap: () =>
+                                    _openMenuPage(context, "Pembayaran")),
+                            _MenuIcon(
+                                icon: Icons.inventory,
+                                onTap: () => _openMenuPage(context, "Proses")),
+                            _MenuIcon(
+                                icon: Icons.local_shipping,
+                                onTap: () =>
+                                    _openMenuPage(context, "Dikirim")),
+                            _MenuIcon(
+                                icon: Icons.inventory_2,
+                                onTap: () =>
+                                    _openMenuPage(context, "Sampai")),
+                            _MenuIcon(
+                                icon: Icons.reviews,
+                                onTap: () =>
+                                    _openMenuPage(context, "Review")),
+                          ],
                         ),
-                        _MenuIcon(
-                          icon: Icons.inventory,
-                          label: "Proses",
-                          onTap: () => _openMenuPage(context, "Proses"),
-                        ),
-                        _MenuIcon(
-                          icon: Icons.local_shipping,
-                          label: "Dikirim",
-                          onTap: () => _openMenuPage(context, "Dikirim"),
-                        ),
-                        _MenuIcon(
-                          icon: Icons.inventory_2,
-                          label: "Sampai",
-                          onTap: () => _openMenuPage(context, "Sampai"),
-                        ),
-                        _MenuIcon(
-                          icon: Icons.reviews,
-                          label: "Review",
-                          onTap: () => _openMenuPage(context, "Review"),
-                        ),
-                      ],
+                      ),
                     ),
 
                     const SizedBox(height: 20),
-                    const Divider(thickness: 1),
-
-                    // Box hanya teks "Alamat"
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[300],
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          child: const Text(
-                            "Alamat",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
+                    const Text("Alamat",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16)),
                     const SizedBox(height: 8),
 
-                    // Isi alamat di luar box
-                    Text(
-                      alamat,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
+                    Card(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      elevation: 2,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Text(alamat,
+                            style: const TextStyle(fontSize: 14)),
                       ),
                     ),
                   ],
@@ -321,30 +291,31 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
 
-            // Copyright
             Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                "© 2025 PT Tembilahan Berkah Jaya\nAll rights reserved",
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 12, color: Colors.black54),
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: _logout,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size.fromHeight(45),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                    icon: const Icon(Icons.logout),
+                    label: const Text("Logout"),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    "© 2025 PT Tembilahan Berkah Jaya\nAll rights reserved",
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 12, color: Colors.black54),
+                  ),
+                ],
               ),
             ),
-
-            Align(
-              alignment: Alignment.bottomLeft,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: ElevatedButton(
-                  onPressed: _logout,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
-                  ),
-                  child: const Text("Logout"),
-                ),
-              ),
-            )
           ],
         ),
       ),
@@ -364,12 +335,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
 class _MenuIcon extends StatelessWidget {
   final IconData icon;
-  final String label;
   final VoidCallback onTap;
 
   const _MenuIcon({
     required this.icon,
-    required this.label,
     required this.onTap,
   });
 
@@ -377,15 +346,10 @@ class _MenuIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Column(
-        children: [
-          CircleAvatar(
-            backgroundColor: Colors.grey[200],
-            child: Icon(icon, color: Colors.black),
-          ),
-          const SizedBox(height: 6),
-          Text(label, style: const TextStyle(fontSize: 12)),
-        ],
+      child: CircleAvatar(
+        radius: 24,
+        backgroundColor: Colors.blue.withOpacity(0.1),
+        child: Icon(icon, color: Colors.blue),
       ),
     );
   }

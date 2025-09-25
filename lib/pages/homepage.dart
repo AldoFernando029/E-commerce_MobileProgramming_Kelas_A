@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';  
 import 'package:provider/provider.dart';
 import '../utils/utils.dart';
 import '../order/order_provider.dart';
 import '../order/order_model.dart';
+import '../pay/kuypay.dart'; // ✅ KuyPay ditambahkan
 import 'search.dart';
 import 'package:marketplace_app/cart/cart.dart';
 import 'package:intl/intl.dart';
@@ -25,7 +26,6 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     products = fetchProducts();
 
-    // Listen untuk update indikator
     _pageController.addListener(() {
       int next = _pageController.page!.round();
       if (_currentPage != next) {
@@ -90,7 +90,6 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    // Cart dengan badge
                     Consumer<OrderProvider>(
                       builder: (context, orderProvider, child) {
                         return InkWell(
@@ -142,12 +141,37 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(height: 15),
 
-                // Hanya saldo AldiPay
-                Row(children: [_chip(label: "AldiPay\nSaldo : Rp. 900")]),
+                // ✅ KuyPay + Kuy Belanja Aja!
+                Consumer<KuyPay>(
+                  builder: (context, kuypay, _) {
+                    final formattedBalance = NumberFormat.currency(
+                      locale: 'id',
+                      symbol: 'Rp',
+                      decimalDigits: 2,
+                    ).format(kuypay.balance);
+
+                    return Row(
+                      children: [
+                        _chip(
+                          icon: Icons.account_balance_wallet_outlined,
+                          label: "KuyPay  |  $formattedBalance",
+                          color: Colors.blue,
+                          boxColor: const Color.fromARGB(255, 200, 238, 255), // box biru muda
+                        ),
+                        const SizedBox(width: 10),
+                        _chip(
+                          icon: Icons.shopping_bag_outlined,
+                          label: "Kuy Belanja Aja!",
+                          color: Colors.green,
+                          boxColor: const Color.fromARGB(255, 200, 255, 200), // box hijau muda
+                        ),
+                      ],
+                    );
+                  },
+                ),
 
                 const SizedBox(height: 20),
 
-                // Banner Promo (geser kanan-kiri + indikator)
                 SizedBox(
                   height: 140,
                   child: Column(
@@ -157,7 +181,8 @@ class _HomePageState extends State<HomePage> {
                           controller: _pageController,
                           children: [
                             _promoCard(
-                              title: "Temukan Gaya & Kenyamanan dengan Fjällräven Kånken",
+                              title:
+                                  "Temukan Gaya & Kenyamanan dengan Fjällräven Kånken",
                               image: "assets/bag.png",
                             ),
                             _promoCard(
@@ -165,7 +190,8 @@ class _HomePageState extends State<HomePage> {
                               image: "assets/shoes.png",
                             ),
                             _promoCard(
-                              title: "Promo Gadget Kekinian dengan Harga Spesial",
+                              title:
+                                  "Promo Gadget Kekinian dengan Harga Spesial",
                               image: "assets/phone.png",
                             ),
                           ],
@@ -232,19 +258,31 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _chip({IconData? icon, required String label, Color? color}) {
+  // 🔹 Chip support boxColor
+  Widget _chip({
+    IconData? icon,
+    required String label,
+    Color? color,
+    Color? boxColor,
+  }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: Colors.grey[200],
+        color: boxColor ?? Colors.grey[200],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (icon != null) Icon(icon, size: 18, color: color ?? Colors.black),
+          if (icon != null) Icon(icon, size: 20, color: color ?? Colors.black),
           if (icon != null) const SizedBox(width: 6),
-          Text(label),
+          Text(
+            label,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: color ?? Colors.black,
+            ),
+          ),
         ],
       ),
     );
@@ -346,7 +384,7 @@ class ProductCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "\Rp.${product.price.toStringAsFixed(2)}",
+                    "Rp${product.price.toStringAsFixed(2)}",
                     style: const TextStyle(
                       fontSize: 13,
                       color: Colors.red,
@@ -356,9 +394,8 @@ class ProductCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   ElevatedButton(
                     onPressed: () {
-                      final now = DateFormat(
-                        "dd MMM yyyy",
-                      ).format(DateTime.now());
+                      final now =
+                          DateFormat("dd MMM yyyy").format(DateTime.now());
 
                       Provider.of<OrderProvider>(
                         context,
@@ -383,7 +420,7 @@ class ProductCard extends StatelessWidget {
                     child: const Text(
                       "Berbelanja",
                       style: TextStyle(
-                        color: Colors.white, // teks jadi putih
+                        color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
