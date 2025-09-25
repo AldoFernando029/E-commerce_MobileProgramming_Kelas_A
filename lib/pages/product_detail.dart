@@ -163,7 +163,7 @@ class ProductDetailPage extends StatelessWidget {
             shadowColor: Colors.black26,
           ),
           child: const Text(
-            "Beli Sekarang",
+            "Masukan Keranjang",
             style: TextStyle(
               fontSize: 16,
               color: Colors.white,

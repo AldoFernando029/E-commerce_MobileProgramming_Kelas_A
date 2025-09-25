@@ -87,7 +87,7 @@ class CartPage extends StatelessWidget {
                                 );
                               },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(255, 63, 183, 63),
+                          backgroundColor: const Color.fromARGB(255, 0, 183, 255),
                           padding: const EdgeInsets.symmetric(
                               horizontal: 32, vertical: 12),
                           shape: RoundedRectangleBorder(
@@ -118,7 +118,7 @@ class CartPage extends StatelessWidget {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(100),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.shade200,
@@ -189,7 +189,7 @@ class CartPage extends StatelessWidget {
                 margin: const EdgeInsets.symmetric(horizontal: 4),
                 decoration: BoxDecoration(
                   color: Colors.grey[100],
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(100),
                 ),
                 child: Text(
                   "${order.quantity}",
@@ -215,9 +215,9 @@ class CartPage extends StatelessWidget {
         padding: const EdgeInsets.all(6),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: Colors.green.withOpacity(0.1),
+          color: const Color.fromARGB(255, 0, 166, 255).withOpacity(0.1),
         ),
-        child: Icon(icon, size: 20, color: Colors.green),
+        child: Icon(icon, size: 20, color: const Color.fromARGB(255, 0, 89, 255)),
       ),
     );
   }

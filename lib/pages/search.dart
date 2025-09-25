@@ -70,11 +70,11 @@ class _SearchPageState extends State<SearchPage> {
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
-            color: Colors.grey.shade200,
+            color: const Color.fromARGB(255, 220, 244, 255),
           ),
           child: Row(
             children: [
-              const Icon(Icons.search, color: Colors.grey),
+              const Icon(Icons.search, color: Color.fromARGB(255, 158, 158, 158)),
               const SizedBox(width: 8),
               Expanded(
                 child: TextField(

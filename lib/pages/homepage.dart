@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> {
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(25),
-                          color: Colors.grey[100],
+                          color: const Color.fromARGB(255, 240, 252, 255),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.grey.withOpacity(0.2),
@@ -116,7 +116,7 @@ class _HomePageState extends State<HomePage> {
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: Colors.grey[100],
+                                  color: const Color.fromARGB(255, 234, 252, 255),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.grey.withOpacity(0.2),
@@ -181,11 +181,14 @@ class _HomePageState extends State<HomePage> {
                         ),
                         const SizedBox(width: 10),
                         Expanded(
-                          child: _chip(
-                            icon: Icons.shopping_bag_outlined,
-                            label: "Kuy Belanja Aja!",
-                            color: Colors.green,
-                            boxColor: const Color.fromARGB(255, 220, 255, 220),
+                          child: InkWell(
+                            onTap: () => _showIdentitasDialog(context),
+                            child: _chip(
+                              icon: Icons.shopping_bag_outlined,
+                              label: "Kuy Belanja Aja!",
+                              color: Colors.green,
+                              boxColor: const Color.fromARGB(255, 220, 255, 220),
+                            ),
                           ),
                         ),
                       ],
@@ -230,7 +233,7 @@ class _HomePageState extends State<HomePage> {
                             duration: const Duration(milliseconds: 300),
                             margin: const EdgeInsets.symmetric(horizontal: 4),
                             width: _currentPage == index ? 16 : 8,
-                            height: 8,
+                            height: 5,
                             decoration: BoxDecoration(
                               color: _currentPage == index
                                   ? Colors.blue
@@ -284,7 +287,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // 🔹 Chip support boxColor
+  // 🔹 Chip
   Widget _chip({
     IconData? icon,
     required String label,
@@ -320,14 +323,14 @@ class _HomePageState extends State<HomePage> {
 
   Widget _promoCard({required String title, required String image}) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 6),
+      margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.15),
+            color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.15),
             blurRadius: 6,
             offset: const Offset(0, 4),
           ),
@@ -362,7 +365,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // 🔹 Dialog Top Up KuyPay (Estetik) + Sisa Saldo
+  // 🔹 Dialog Top Up KuyPay
   void _showTopUpDialog(BuildContext context) {
     final controller = TextEditingController();
 
@@ -386,105 +389,131 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Icon Wallet
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.account_balance_wallet_outlined,
-                    color: Colors.blue,
-                    size: 40,
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Title
+                const Icon(Icons.account_balance_wallet_outlined,
+                    size: 40, color: Colors.blue),
+                const SizedBox(height: 12),
                 const Text(
                   "Top Up KuyPay",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
                 const SizedBox(height: 10),
-
-                // ✅ Sisa Saldo
-                Text(
-                  "Sisa Saldo: $formattedBalance",
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.black54,
-                  ),
-                ),
+                Text("Sisa Saldo: $formattedBalance",
+                    style: const TextStyle(color: Colors.black54)),
                 const SizedBox(height: 16),
-
-                // Input Jumlah
                 TextField(
                   controller: controller,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     labelText: "Masukkan jumlah",
                     prefixText: "Rp ",
-                    filled: true,
-                    fillColor: Colors.grey[100],
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                 ),
                 const SizedBox(height: 20),
-
-                // Tombol Aksi
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Tombol Batal
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.grey[600],
-                      ),
                       child: const Text("Batal"),
                     ),
-
-                    // Tombol Top Up
                     ElevatedButton.icon(
                       onPressed: () {
                         final amount = double.tryParse(controller.text) ?? 0;
                         if (amount > 0) {
                           context.read<KuyPay>().topUp(amount);
                           Navigator.pop(context);
-
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               backgroundColor: Colors.green,
-                              content: Text(
-                                "Top up berhasil Rp${amount.toStringAsFixed(0)}",
-                                style: const TextStyle(color: Colors.white),
-                              ),
+                              content: Text("Top up Rp${amount.toStringAsFixed(0)}"),
                             ),
                           );
                         }
                       },
                       icon: const Icon(Icons.check_circle_outline, size: 18),
                       label: const Text("Top Up"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 12,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
                     ),
                   ],
-                ),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // 🔹 Dialog Identitas 4 anggota
+  void _showIdentitasDialog(BuildContext context) {
+    final anggota = [
+      {"nama": "Muhammad Aldi Rifky Pasaribu", "nim": "535240005"},
+      {"nama": "Aldo Fernando", "nim": "535240029"},
+      {"nama": "Howard Dominikov Oei", "nim": "535240014"},
+      {"nama": "Dafiza Mutakin", "nim": "535240032"},
+    ];
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start, // ✅ Rata kiri
+              children: [
+                const Text("Identitas Anggota Kelompok E-Commerce",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                const Divider(thickness: 1),
+                const SizedBox(height: 10),
+                ...anggota.map((a) => Align(
+                      alignment: Alignment.centerLeft, // ✅ Box ikut rata kiri
+                      child: Container(
+                        margin: const EdgeInsets.only(bottom: 10),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.shade300,
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 200,
+                          maxWidth: 280,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Nama : ${a["nama"]}",
+                                textAlign: TextAlign.start,
+                                style: const TextStyle(fontWeight: FontWeight.w500)),
+                            Text("NIM   : ${a["nim"]}",
+                                textAlign: TextAlign.start,
+                                style: const TextStyle(fontWeight: FontWeight.w500)),
+                          ],
+                        ),
+                      ),
+                    )),
+                const SizedBox(height: 10),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("Tutup"),
+                  ),
+                )
               ],
             ),
           ),
@@ -540,32 +569,24 @@ class ProductCard extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
-                  Text(
-                    product.title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 13),
-                  ),
+                  Text(product.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 13)),
                   const SizedBox(height: 4),
-                  Text(
-                    "Rp${product.price.toStringAsFixed(2)}",
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  Text("Rp${product.price.toStringAsFixed(2)}",
+                      style: const TextStyle(
+                          fontSize: 13,
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   ElevatedButton(
                     onPressed: () {
                       final now =
                           DateFormat("dd MMM yyyy").format(DateTime.now());
-
-                      Provider.of<OrderProvider>(
-                        context,
-                        listen: false,
-                      ).addOrder(
+                      Provider.of<OrderProvider>(context, listen: false)
+                          .addOrder(
                         Order(
                           title: product.title,
                           date: now,
@@ -573,7 +594,6 @@ class ProductCard extends StatelessWidget {
                           image: product.image,
                         ),
                       );
-
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text("Pesanan ditambahkan!")),
                       );
@@ -582,17 +602,13 @@ class ProductCard extends StatelessWidget {
                       backgroundColor: Colors.blue,
                       minimumSize: const Size(double.infinity, 36),
                     ),
-                    child: const Text(
-                      "Berbelanja",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                    child: const Text("Beli",
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold)),
+                  )
                 ],
               ),
-            ),
+            )
           ],
         ),
       ),

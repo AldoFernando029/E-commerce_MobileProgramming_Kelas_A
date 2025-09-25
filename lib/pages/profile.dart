@@ -167,7 +167,7 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Card(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(100)),
-                color: Colors.blue,
+                color: const Color.fromARGB(255, 255, 255, 255),
                 elevation: 4,
                 child: Padding(
                   padding:
@@ -197,22 +197,22 @@ class _ProfilePageState extends State<ProfilePage> {
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
-                                    color: Colors.white)),
+                                    color: Color.fromARGB(255, 0, 0, 0))),
                             const SizedBox(height: 4),
                             Text(phone,
                                 style: const TextStyle(
-                                    fontSize: 12, color: Colors.white70)),
+                                    fontSize: 12, color: Color.fromARGB(179, 0, 0, 0))),
                             const SizedBox(height: 6),
                             Container(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 3),
                               decoration: BoxDecoration(
-                                color: const Color.fromARGB(255, 255, 255, 255),
+                                color: const Color.fromARGB(255, 0, 170, 255),
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               child: const Text("Member Gold",
                                   style: TextStyle(
-                                      color: Colors.blue,
+                                      color: Color.fromARGB(255, 255, 255, 255),
                                       fontWeight: FontWeight.bold,
                                       fontSize: 11)),
                             )
@@ -240,7 +240,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Card(
                       color: const Color.fromARGB(255, 255, 255, 255),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16)),
+                          borderRadius: BorderRadius.circular(100)),
                       elevation: 2,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -280,7 +280,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Card(
                       color: const Color.fromARGB(255, 255, 255, 255),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                          borderRadius: BorderRadius.circular(5)),
                       elevation: 2,
                       child: Padding(
                         padding: const EdgeInsets.all(12.0),
