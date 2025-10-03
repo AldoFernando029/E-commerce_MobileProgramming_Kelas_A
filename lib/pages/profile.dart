@@ -161,7 +161,6 @@ class _ProfilePageState extends State<ProfilePage> {
       body: SafeArea(
         child: Column(
           children: [
-            // Bagian Profile Card (diperkecil)
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Card(
@@ -177,7 +176,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       GestureDetector(
                         onTap: _showBiodataPopup,
                         child: CircleAvatar(
-                          radius: 30, // lebih kecil
+                          radius: 30, 
                           backgroundColor: Colors.white,
                           backgroundImage: profileImagePath != null
                               ? FileImage(File(profileImagePath!))
@@ -236,7 +235,6 @@ class _ProfilePageState extends State<ProfilePage> {
                             fontWeight: FontWeight.bold, fontSize: 16)),
                     const SizedBox(height: 12),
 
-                    // Transaksi Card (icon tanpa label)
                     Card(
                       color: const Color.fromARGB(255, 255, 255, 255),
                       shape: RoundedRectangleBorder(

@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../utils/utils.dart';
 import '../order/order_provider.dart';
 import '../order/order_model.dart';
-import '../pay/kuypay.dart'; // ✅ KuyPay ditambahkan
+import '../pay/kuypay.dart'; 
 import 'search.dart';
 import 'package:marketplace_app/cart/cart.dart';
 import 'package:intl/intl.dart';
@@ -53,7 +53,6 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 🔎 Search + Cart
                 Row(
                   children: [
                     Expanded(
@@ -157,7 +156,6 @@ class _HomePageState extends State<HomePage> {
 
                 const SizedBox(height: 18),
 
-                // ✅ KuyPay + Kuy Belanja Aja!
                 Consumer<KuyPay>(
                   builder: (context, kuypay, _) {
                     final formattedBalance = NumberFormat.currency(
@@ -198,7 +196,6 @@ class _HomePageState extends State<HomePage> {
 
                 const SizedBox(height: 22),
 
-                // 🖼 Banner Promo
                 SizedBox(
                   height: 120,
                   child: Column(

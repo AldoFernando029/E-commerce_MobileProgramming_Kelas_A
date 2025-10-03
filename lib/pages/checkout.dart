@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:provider/provider.dart';
 import '../order/order_model.dart';
 import '../order/order_provider.dart';
-import '../pay/kuypay.dart'; // ✅ KuyPay ditambahkan
+import '../pay/kuypay.dart'; 
 import 'menupage.dart';
 
 class CheckoutPage extends StatefulWidget {
@@ -51,7 +51,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
 
     return Scaffold(
-      backgroundColor: Colors.white, // ✅ background putih
+      backgroundColor: Colors.white, 
       appBar: AppBar(
         title: const Text(
           "Checkout",

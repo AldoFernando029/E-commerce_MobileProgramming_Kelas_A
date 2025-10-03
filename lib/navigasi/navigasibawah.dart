@@ -32,7 +32,7 @@ class _NavigasiBawahState extends State<NavigasiBawah> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: Colors.blue, // ✅ warna biru saat dipilih
+        selectedItemColor: Colors.blue,
         unselectedItemColor: const Color.fromARGB(255, 0, 0, 0),
         items: const [
           BottomNavigationBarItem(

@@ -8,8 +8,8 @@ class Product {
   final double price;
   final String description;
   final String category;
-  final double rating; // ⭐ nilai rating
-  final int ratingCount; // jumlah review
+  final double rating; 
+  final int ratingCount; 
 
   Product({
     required this.id,

@@ -58,7 +58,6 @@ class ProductDetailPage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
 
-            // Judul Produk
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
@@ -71,7 +70,6 @@ class ProductDetailPage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
 
-            // Harga
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
@@ -85,7 +83,6 @@ class ProductDetailPage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
 
-            // Rating
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
@@ -101,7 +98,6 @@ class ProductDetailPage extends StatelessWidget {
             ),
             const Divider(height: 30, thickness: 1.2),
 
-            // Deskripsi
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
@@ -115,7 +111,6 @@ class ProductDetailPage extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
-            // Kategori
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
@@ -132,7 +127,6 @@ class ProductDetailPage extends StatelessWidget {
         ),
       ),
 
-      // Tombol Beli
       bottomNavigationBar: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: ElevatedButton(

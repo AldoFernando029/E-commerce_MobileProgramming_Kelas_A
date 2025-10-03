@@ -30,7 +30,6 @@ class _SplashPageState extends State<SplashPage>
 
     _controller.forward();
 
-    // pindah ke navigasi bawah setelah 3 detik
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,

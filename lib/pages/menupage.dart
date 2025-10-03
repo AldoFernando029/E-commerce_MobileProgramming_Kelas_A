@@ -112,7 +112,6 @@ class _MenuPageState extends State<MenuPage> {
             ),
             const SizedBox(height: 16),
 
-            // ✅ Filter Status center
             Center(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -260,7 +259,6 @@ class _TransaksiCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -299,7 +297,6 @@ class _TransaksiCard extends StatelessWidget {
                   ),
                   if (status == "Review") ...[
                     const SizedBox(width: 6),
-                    // ✅ tombol delete lebih kecil agar box seragam
                     InkWell(
                       onTap: onDelete,
                       borderRadius: BorderRadius.circular(20),
